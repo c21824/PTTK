@@ -16,6 +16,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.Date;
 import java.time.LocalDate;
+import java.text.SimpleDateFormat;
+import java.text.ParseException;
 
 @WebServlet(name="ReaderCard", value = "/Reader/ReaderCard")
 public class ReaderCardServlet extends HttpServlet {
@@ -55,18 +57,41 @@ public class ReaderCardServlet extends HttpServlet {
                 return;
             }
 
-            int addressId = addressDAO.checkExistOrCreateAddress(new Address(country, city, ward, street, houseNumber));
-            Reader reader = new Reader(fullname, email, phoneNumber, Date.valueOf(dateOfBirth), addressId);
-            int readerId = readerCardDAO.createReader(new Reader(fullname, email, phoneNumber, Date.valueOf(dateOfBirth), addressId));
+            java.sql.Date birthDateSql = null;
+            if (dateOfBirth != null && !dateOfBirth.trim().isEmpty()) {
+                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+                sdf.setLenient(false);
+                try {
+                    java.util.Date parsed = sdf.parse(dateOfBirth);
+                    birthDateSql = new java.sql.Date(parsed.getTime());
+                } catch (ParseException pe) {
+                    // fallback: try yyyy-MM-dd
+                    try {
+                        birthDateSql = java.sql.Date.valueOf(dateOfBirth);
+                    } catch (IllegalArgumentException iae) {
+                        request.setAttribute("errorMessage", "Invalid date format. Please use dd/MM/yyyy");
+                        request.getRequestDispatcher("/Reader/RegisterForReaderCardView.jsp").forward(request, response);
+                        return;
+                    }
+                }
+            } else {
+                request.setAttribute("errorMessage", "Date of birth is required");
+                request.getRequestDispatcher("/Reader/RegisterForReaderCardView.jsp").forward(request, response);
+                return;
+            }
+
+             int addressId = addressDAO.checkExistOrCreateAddress(new Address(country, city, ward, street, houseNumber));
+            Reader reader = new Reader(fullname, email, phoneNumber, birthDateSql, addressId);
+            int readerId = readerCardDAO.createReader(reader);
             reader.setId(readerId);
-            String cardNumber = String.format("RC%05d", reader.getId());
-            String createDate = LocalDate.now().toString();
+             String cardNumber = String.format("RC%05d", reader.getId());
+             String createDate = LocalDate.now().toString();
             readerCardDAO.createReaderCard(new ReaderCard(cardNumber, Date.valueOf(createDate), reader));
 
-            request.setAttribute("successMessage", "Register complete! Card Number:" + cardNumber);
-            request.getRequestDispatcher("/Reader/ReaderMainView.jsp").forward(request,response);
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-    }
-}
+             request.setAttribute("successMessage", "Register complete! Card Number:" + cardNumber);
+             request.getRequestDispatcher("/Reader/ReaderMainView.jsp").forward(request,response);
+         }catch (Exception e){
+             e.printStackTrace();
+         }
+     }
+ }

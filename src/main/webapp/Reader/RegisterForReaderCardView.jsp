@@ -61,7 +61,6 @@
 </head>
 <body>
 
-<!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-dark">
     <div class="container">
         <a class="navbar-brand fw-bold" href="ReaderMainView.jsp#">📚 LibMan</a>
@@ -72,7 +71,6 @@
     </div>
 </nav>
 
-<!-- Form Section -->
 <div class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-md-8">
@@ -84,7 +82,7 @@
                 </div>
                 <% } %>
 
-                <form action="ReaderCard" method="post">
+                <form action="ReaderCard" method="post" id="registerForm">
                     <h5 class="mb-3 text-secondary fw-bold">Personal Information</h5>
 
                     <div class="mb-3">
@@ -94,8 +92,10 @@
                     </div>
 
                     <div class="mb-3">
-                        <label for="dateOfBirth" class="form-label">Date of Birth *</label>
-                        <input type="date" id="dateOfBirth" name="dateOfBirth" class="form-control" required>
+                        <label for="dateOfBirth" class="form-label">Date of Birth * (dd/mm/yyyy)</label>
+                        <input type="text" id="dateOfBirth" name="dateOfBirth" class="form-control"
+                               placeholder="dd/mm/yyyy" pattern="\d{2}/\d{2}/\d{4}" required>
+                        <div class="form-text">Format: dd/mm/yyyy (e.g., 31/12/1990)</div>
                     </div>
 
                     <div class="mb-3">
@@ -152,5 +152,39 @@
     </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    (function(){
+        var dob = document.getElementById('dateOfBirth');
+        if(!dob) return;
+        dob.addEventListener('input', function(e){
+            var v = dob.value.replace(/\D/g, '').slice(0,8);
+            var parts = [];
+            if(v.length > 2) { parts.push(v.slice(0,2)); v = v.slice(2); } else { parts.push(v); v = ''; }
+            if(v.length > 2) { parts.push(v.slice(0,2)); v = v.slice(2); } else if(v.length>0){ parts.push(v); v = ''; }
+            if(v.length>0) parts.push(v);
+            dob.value = parts.join('/');
+        });
+
+        document.getElementById('registerForm').addEventListener('submit', function(ev){
+            var val = dob.value;
+            if(!/^\d{2}\/\d{2}\/\d{4}$/.test(val)){
+                ev.preventDefault();
+                alert('Please enter date in dd/mm/yyyy format');
+                dob.focus();
+                return false;
+            }
+            // Basic semantic check for day/month ranges
+            var parts = val.split('/');
+            var day = parseInt(parts[0],10), month = parseInt(parts[1],10), year = parseInt(parts[2],10);
+            if(month < 1 || month > 12 || day < 1 || day > 31){
+                ev.preventDefault();
+                alert('Please enter a valid date');
+                dob.focus();
+                return false;
+            }
+            return true;
+        });
+    })();
+</script>
 </body>
 </html>
