@@ -92,10 +92,9 @@
                     </div>
 
                     <div class="mb-3">
-                        <label for="dateOfBirth" class="form-label">Date of Birth * (dd/mm/yyyy)</label>
+                        <label for="dateOfBirth" class="form-label">Date of Birth *</label>
                         <input type="text" id="dateOfBirth" name="dateOfBirth" class="form-control"
                                placeholder="dd/mm/yyyy" pattern="\d{2}/\d{2}/\d{4}" required>
-                        <div class="form-text">Format: dd/mm/yyyy (e.g., 31/12/1990)</div>
                     </div>
 
                     <div class="mb-3">
