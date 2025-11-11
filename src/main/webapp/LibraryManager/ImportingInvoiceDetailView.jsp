@@ -202,7 +202,6 @@
         </tbody>
     </table>
 
-    <!-- Pagination controls for importing documents in the invoice -->
     <div class="d-flex justify-content-between align-items-center mt-3">
         <div>
             <form id="pageSizeFormDoc" method="get" action="<%= request.getContextPath() %>/ImportingDocument">

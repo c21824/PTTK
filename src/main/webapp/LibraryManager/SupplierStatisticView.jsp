@@ -104,7 +104,6 @@
     </tbody>
   </table>
 
-  <!-- Pagination controls -->
   <div class="d-flex justify-content-between align-items-center mt-3">
     <div>
       <form id="pageSizeForm" method="get" action="<%= request.getContextPath() %>/LibraryManager/StatisticSupplier">
@@ -129,7 +128,6 @@
 
             String base = request.getContextPath() + "/LibraryManager/StatisticSupplier?timeStart=" + java.net.URLEncoder.encode(timeStart, "UTF-8") + "&timeEnd=" + java.net.URLEncoder.encode(timeEnd, "UTF-8") + "&pageSize=" + pageSize;
 
-            // Prev
             if (currentPage > 1) {
           %>
           <li class="page-item"><a class="page-link" href="<%= base + "&page=" + (currentPage-1) %>">Previous</a></li>
@@ -137,7 +135,6 @@
           <li class="page-item disabled"><span class="page-link">Previous</span></li>
           <% }
 
-            // page numbers - show up to 7 pages (current +/-3)
             int start = Math.max(1, currentPage - 3);
             int end = Math.min(totalPages, currentPage + 3);
             if (start > 1) { %>
@@ -163,7 +160,6 @@
               <li class="page-item"><a class="page-link" href="<%= base + "&page=" + totalPages %>"><%= totalPages %></a></li>
             <% }
 
-            // Next
             if (currentPage < totalPages) {
           %>
           <li class="page-item"><a class="page-link" href="<%= base + "&page=" + (currentPage+1) %>">Next</a></li>

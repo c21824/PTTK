@@ -32,7 +32,6 @@ public class SupplierStatisticServlet extends HttpServlet {
 
         HttpSession session = request.getSession();
 
-        // If timeStart/timeEnd not provided in this request (e.g. paging links), try to get from session
         if ((timeStart == null || timeEnd == null) && session.getAttribute("timeStart") != null && session.getAttribute("timeEnd") != null) {
             timeStart = (String) session.getAttribute("timeStart");
             timeEnd = (String) session.getAttribute("timeEnd");
@@ -59,7 +58,6 @@ public class SupplierStatisticServlet extends HttpServlet {
                     Comparator.comparingDouble(SupplierStatistic::getTotalPrice).reversed()
             );
 
-            // Pagination: read page and pageSize from request, with defaults
             int page = 1;
             int pageSize = 10;
             try {
@@ -78,7 +76,6 @@ public class SupplierStatisticServlet extends HttpServlet {
             int toIndex = Math.min(fromIndex + pageSize, totalItems);
             List<SupplierStatistic> pageList = supplierStatistics.subList(fromIndex, toIndex);
 
-            // store time range in session as before (keep DMY formatted)
             String strTimeStart = ConvertDate.toDmyFromObject(timeStart);
             String strTimeEnd = ConvertDate.toDmyFromObject(timeEnd);
             session.setAttribute("timeStart", strTimeStart);
@@ -86,7 +83,6 @@ public class SupplierStatisticServlet extends HttpServlet {
 
             request.setAttribute("totalQuantity", totalQuantity);
             request.setAttribute("totalPrice", totalPrice);
-            // set paginated list into request so JSP renders only current page
             request.setAttribute("supplierStatistics", pageList);
             request.setAttribute("currentPage", page);
             request.setAttribute("totalPages", totalPages);

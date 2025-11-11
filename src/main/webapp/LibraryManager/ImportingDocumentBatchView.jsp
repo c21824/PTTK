@@ -190,7 +190,6 @@
         </tbody>
     </table>
 
-    <!-- Pagination controls for importing invoices -->
     <div class="d-flex justify-content-between align-items-center mt-3">
         <div>
             <form id="pageSizeFormInv" method="get" action="<%= request.getContextPath() %>/ImportingInvoice">

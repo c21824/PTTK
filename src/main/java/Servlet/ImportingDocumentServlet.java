@@ -38,12 +38,10 @@ public class ImportingDocumentServlet extends HttpServlet {
         HttpSession session = req.getSession();
         List<ImportingDocument> importingDocuments = importingDocumentDAO.getImportingDocumentByImportingInvoiceId(importingInvoiceId);
 
-        // sort full list first
         importingDocuments.sort(
                 Comparator.comparingDouble(ImportingDocument::getQuantity).reversed()
         );
 
-        // Pagination: read page and pageSize from request, defaults
         int page = 1;
         int pageSize = 10;
         try {
@@ -65,7 +63,6 @@ public class ImportingDocumentServlet extends HttpServlet {
             pageList = importingDocuments.subList(fromIndex, toIndex);
         }
 
-        // Only fetch documents for current page to reduce DB calls
         List<Document> documents = new ArrayList<>();
         for(ImportingDocument d : pageList){
             Document document = documentDAO.getDocumentById(d.getDocumentId());
@@ -77,12 +74,10 @@ public class ImportingDocumentServlet extends HttpServlet {
         req.setAttribute("totalPrice", totalPrice);
         req.setAttribute("importingDocuments", pageList);
         req.setAttribute("documents", documents);
-        // pagination attributes
         req.setAttribute("currentPage", page);
         req.setAttribute("totalPages", totalPages);
         req.setAttribute("pageSize", pageSize);
         req.setAttribute("totalItems", totalItems);
-        // also expose importingInvoiceId for building links in JSP
         req.setAttribute("importingInvoiceId", importingInvoiceId);
         req.getRequestDispatcher("/LibraryManager/ImportingInvoiceDetailView.jsp").forward(req, resp);
     }
